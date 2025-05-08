@@ -8,12 +8,16 @@ This work proposed a novel Multi-Source Hybrid Attention Reinforcement Learning 
 ## Demo
 
 ### Case 1  
-![Case 1 Demo](./assets/gif/sinr_-3.gif "Hover text")  
-*Thereshold SINR = -3 dB, in Berlin, Germany*
+<p align="center">
+  <img src="./assets/gif/sinr_-3.gif" alt="Threshold SINR = -3 dB demonstration" width="500">
+</p>
+*Threshold SINR = -3 dB, in Berlin, Germany*
 
 ### Case 2  
-![Case 1 Demo](./assets/gif/sinr_-17.gif "Hover text")  
-*Thereshold SINR = -17 dB, in Detroit, USA*
+<p align="center">
+  <img src="./assets/gif/sinr_-17.gif" alt="Threshold SINR = -17 dB demonstration" width="500">
+</p>
+*Threshold SINR = -17 dB, in Detroit, USA*
 
 ## Quick start:
 ### 1. Install TransSimHub

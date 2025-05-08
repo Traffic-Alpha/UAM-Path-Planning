@@ -1,5 +1,5 @@
 # UAM-Path-Planning
-# Paper:
+# Paper
 **Real-Time Communication-Aware Ride-Sharing Route Planning for Urban Air Mobility: A Multi-Source Hybrid Attention Reinforcement Learning Approach,**
 accpeted by ICC 2025.
 ## Overview  

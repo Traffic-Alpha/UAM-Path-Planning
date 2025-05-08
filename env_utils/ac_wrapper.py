@@ -45,9 +45,6 @@ class ACEnvWrapper(gym.Wrapper):
         self.side_length = None  # 地图边长
         self.uncertainty_x_max, self.uncertainty_y_max = 33, 33  # 不确定性矩阵的大小
 
-        self.guide_point = None
-        self.guide_stat = None
-
         # SNIR threshold
         self.snir_min = snir_min
 
@@ -79,28 +76,7 @@ class ACEnvWrapper(gym.Wrapper):
 
         # action 转换
         speed = self.speed
-        # self.air_actions = {
-        #     0: (speed, 0), # -> 右
-        #     1: (speed, 1), # ↗ 右上
-        #     2: (speed, 2), # ↑ 正上
-        #     3: (speed, 3), # ↖ 左上
-        #     4: (speed, 4), # ← 左
-        #     5: (speed, 5), # ↙ 左下
-        #     6: (speed, 6), # ↓ 正下
-        #     7: (speed, 7), # ↘ 右下
-        #     # 8: (0, 0),
-        #     # ...
-        # }
-        # self.opsite_actions = {
-        #     0:(speed, 4),
-        #     1:(speed, 5),
-        #     2:(speed, 6),
-        #     3:(speed, 7),
-        #     4:(speed, 0),
-        #     5:(speed, 1),
-        #     6:(speed, 2),
-        #     7:(speed, 3),
-        # }
+
         self.air_actions = {
             0: (speed, 0), # -> 右
             1: (speed, 1), # ↗ 右上
@@ -118,7 +94,6 @@ class ACEnvWrapper(gym.Wrapper):
             13: (speed, 13), # ↘ 右下
             14: (speed, 14), # ↘ 右下
             15: (speed, 15), # ↘ 右下
-            # 8: (0, 0),
             # ...
         }
         self.opsite_actions = {
@@ -185,7 +160,6 @@ class ACEnvWrapper(gym.Wrapper):
                             snir.append(self.grid_z[k, l])
                 mean_snir = np.nanmean(snir)
                 new_grid_z[int(x // scale_grid_num), int(y // scale_grid_num)] = mean_snir
-
         return new_grid_z
 
     def get_around_snir(self, x, y):
@@ -245,15 +219,8 @@ class ACEnvWrapper(gym.Wrapper):
 
         for ac_idx, (aircraft_id, aircraft_info) in enumerate(aircraft.items()):
             aircraft_pos = aircraft_info["position"]
-            # action = actions[aircraft_id][-1]
             aircraft_x, aircraft_y, aircraft_h = round(aircraft_pos[0]), round(aircraft_pos[1]), round(aircraft_pos[2]) # 四舍五入取整
             aircraft_pos_new = self.get_relative_pos(aircraft_id, aircraft_pos)
-
-            # 如果UAM飞出边界
-            # if aircraft_x < 0 or aircraft_x >= self.x_max:
-            #     return "return", self.opsite_actions[action]
-            # if aircraft_y < 0 or aircraft_y >= self.y_max:
-            #     return "return", self.opsite_actions[action]
 
             # Map attributes: snir
             scaled_grid_len = int(self.speed)
@@ -269,19 +236,8 @@ class ACEnvWrapper(gym.Wrapper):
                 y_scale = 0
 
             # 地理坐标系 (m, n) -> 矩阵坐标 (n, m)
-            snir_value = self.scaled_snir_grid[int(y_scale), int(x_scale)]
+            # snir_value = self.scaled_snir_grid[int(y_scale), int(x_scale)]
             around_snir_matrix = self.get_around_snir(int(y_scale), int(x_scale))
-
-            # AC attributes:
-            # 如果snir值大于阈值，则更新ac的位置信息
-            # if snir_value > self.snir_min:
-            #     self.ac_history_pos[aircraft_id].append(aircraft_pos[:2])  # 维护ac的轨迹
-            #     ac_state = aircraft_pos_new + [self.ac_seat_flag]
-            #     self._pos_set.append(ac_state)  # ac时序
-            # else: # 如果snir值小于或等于阈值，返回并执行相反的动作
-            #     self.ac_history_pos[aircraft_id].append(aircraft_pos[:2])  # 维护ac的轨迹
-            #     print("return",aircraft_pos[:2])
-            #     return "return", self.opsite_actions[action]
 
             # AC attributes:
             self.ac_history_pos[aircraft_id].append(aircraft_pos[:2])  # 维护ac的轨迹
@@ -289,7 +245,6 @@ class ACEnvWrapper(gym.Wrapper):
             self._pos_set.append(ac_state)  # ac时序
 
             new_state[aircraft_id]["pos_set"] = np.array(self._pos_set).reshape(1, -1)
-
 
             # uncertainty matrix 地理坐标系 (m, n) -> 矩阵坐标 (n, m)
             self.uncertainty_matrix[y_scale, x_scale] += 1
@@ -384,16 +339,11 @@ class ACEnvWrapper(gym.Wrapper):
                 bound_reward = -50
                 reward += bound_reward
                 return reward, dones, self.opsite_actions[action]
-                # dones = True
-                # self.actru_trajectory = self.ac_history_pos
-                # return reward, dones
+
             if _y < 0 or _y > self.y_max:
                 bound_reward = -50
                 reward += bound_reward
                 return reward, dones, self.opsite_actions[action]
-                # dones = True
-                # self.actru_trajectory = self.ac_history_pos
-                # return reward, dones
 
             # 惩罚ac飞到snir较低的区域
             # 地理坐标系 (m, n) -> 矩阵坐标 (n, m)
@@ -432,24 +382,6 @@ class ACEnvWrapper(gym.Wrapper):
                 self.padded_passen_attr[passen_idx, -2] = on_ac_flag
                 self.padded_passen_attr[passen_idx, -1] = is_served_flag
 
-            # guide point
-            if self.guide_point:
-                for passen_idx, goal_points in enumerate(self.guide_point):
-                    is_served_flag_0 = self.guide_stat[passen_idx, -1]
-                    is_served_flag_1 = self.guide_stat[passen_idx, -2]
-
-                    if self.arrive_goal(aircraft_pos, goal_points[0]) and is_served_flag_0 == 0:
-                        start_reward = 50
-                        reward += start_reward
-                        is_served_flag_0 = 1
-                    if self.arrive_goal(aircraft_pos, goal_points[1]) and is_served_flag_1 == 0: # 到达第二个点
-                        start_reward = 50
-                        reward += start_reward
-                        is_served_flag_1 = 1
-
-                    self.guide_stat[passen_idx, -1] = is_served_flag_0
-                    self.guide_stat[passen_idx, -2] = is_served_flag_1
-
             # 如果所有乘客已服务完成，游戏结束
             all_passen_serve = self.padded_passen_attr[:, -1]
             if np.all(all_passen_serve == 1):
@@ -464,22 +396,8 @@ class ACEnvWrapper(gym.Wrapper):
         """reset 时初始化 (1) 静态信息; (2) 动态信息
         """
         state = self.env.reset()
-        # self.guide_point = [
-        #                     [(7020, 8910), (6750, 8100)],  # S1
-        #                     [(7115, 7641), (7635, 7538)],  # 找S2
-        #                     [(8640, 6210), (8100, 5910)],  # 找S3
-        #                     [(6750, 5400), (5970, 4850)],  # 找D2
-        #                     [(5260, 4860), (4050, 5670)], [(5060, 5120), (4790, 5290)],  # 找S4
-        #                     [(1890, 5200), (1620, 5100)],  # find D3
-        #                     [(1620, 5940), (1620, 6210)],  # find S5
-        #                     [(2200, 6480), (2200, 4050)],  # find D5
-        #                     # [(4051, 3168), (4830, 2770)],  # find D4
-        #                     [(5940, 1890), (6210, 1620)], [(5940, 1890), (6750, 1350)], [(7290, 1620), (7560, 2160)],
-        #                      ] # find D6
-        # self.guide_stat = np.zeros((len(self.guide_point), 2))
 
         self.side_length = min(state['grid']['100'].x_max - state['grid']['100'].x_min, state['grid']['100'].y_max - state['grid']['100'].y_min)
-
         self.x_max = self.side_length  # side_length = min(x_max - x_min, y_max - y_min)
         self.y_max = self.side_length # 11130 self.side_length
         self.re_step_count = 0

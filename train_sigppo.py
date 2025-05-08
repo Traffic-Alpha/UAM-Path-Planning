@@ -36,7 +36,7 @@ if __name__ == '__main__':
     parser.add_argument('--snir_min', type=int, default=-17, help='The threshold of SNIR') # 最小SNIR值，小于这个值的乘客不参与训练
     parser.add_argument('--num_envs', type=int, default=1, help='The number of environments')
     parser.add_argument('--n_steps', type=int, default=2000, help='The number of steps in each environment')
-    parser.add_argument('--policy_model', type=str, default="fusion_models_v0", help='policy network: baseline_models or fusion_models_4')
+    parser.add_argument('--policy_model', type=str, default="fusion_models_v8", help='policy network: baseline_models or fusion_models_4')
     parser.add_argument('--features_dim', type=int, default=2048, help='The dimension of output features 64')
     parser.add_argument('--lr', type=float, default=5e-5, help='The learning rate of PPO')
     parser.add_argument('--batch_size', type=int, default=400, help='The batch size of PPO')

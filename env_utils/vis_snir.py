@@ -94,9 +94,6 @@ def plot_snir_map(ax, x_min, y_min, x_max, y_max, threshold, grid_z):
     cmap = plt.cm.viridis
     cmap.set_bad(color='black')
 
-    # grid_z_masked = grid_z.copy()
-    # cmap = plt.cm.viridis
-
     # 绘制 grid_z 数值
     cax = ax.imshow(grid_z_masked, extent=(x_min, x_max, y_min, y_max), origin='lower',cmap=cmap) # 能和sinr原始底图对应
     # 修改颜色低透明度
@@ -147,13 +144,13 @@ def plot_goal_points(ax, goal_points, color, marker, point_type):
     for idx, point in enumerate(goal_points):
         ax.scatter(*point, s=50, c=color, marker=marker, label=f"{point_type}{idx} at {point}")
         # 每一个点旁边加一个标签
-        # if idx == 1:
-        #     ax.annotate(f"{point_type}{idx+1}", xy=point,
-        #                 xytext=(point[0] - int(150), point[1] - int(150)))
-        #
-        # else:
-        #     ax.annotate(f"{point_type}{idx}", xy=point, xytext=(point[0] + int(50), point[1] + int(50)))
-        ax.annotate(f"{point_type}{idx+1}", xy=point, xytext=(point[0] + int(50), point[1] + int(50)))
+        if idx == 1:
+            ax.annotate(f"{point_type}{idx+1}", xy=point,
+                        xytext=(point[0] - int(150), point[1] - int(150)))
+
+        else:
+            ax.annotate(f"{point_type}{idx}", xy=point, xytext=(point[0] + int(50), point[1] + int(50)))
+        # ax.annotate(f"{point_type}{idx+1}", xy=point, xytext=(point[0] + int(50), point[1] + int(50)))
 
     # 添加图例
     # ax.legend()

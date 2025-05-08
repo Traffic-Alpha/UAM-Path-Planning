@@ -1,14 +1,6 @@
-'''
-@Author: WANG Maonan
-@Date: 2023-09-08 17:45:54
-@Description: 创建 TSC Env + Wrapper
-@LastEditTime: 2023-09-08 18:25:42
-'''
 import gymnasium as gym
 from env_utils.aircraft_snir_env import ACSNIREnvironment
-# from env_utils.ac_wrapper import ACEnvWrapper
-from env_utils.ac_wrapper_berlin import ACEnvWrapper
-# from env_utils.ac_wrapper_berlin_v2 import ACEnvWrapper
+from env_utils.ac_wrapper import ACEnvWrapper
 from stable_baselines3.common.monitor import Monitor
 
 def make_env(

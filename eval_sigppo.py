@@ -18,12 +18,6 @@ from env_utils.vis_snir import render_map
 path_convert = get_abs_path(__file__)
 logger.remove()
 
-# python eval_fix_method.py --snir_min -21 --lr 6e-05 --batch_size 350 --n_steps 2000 --num_seconds 2500
-# python eval_fix_method.py --snir_min -20 --lr 6e-05 --batch_size 350 --n_steps 2000 --num_seconds 2500
-# python eval_fix_method.py --snir_min -19 --lr 6e-05 --batch_size 500 --n_steps 2000 --num_seconds 2500
-# python eval_fix_method.py --snir_min -18 --lr 6e-05 --batch_size 400 --n_steps 2000 --num_seconds 2500
-# python eval_fix_method.py --snir_min -17 --lr 5e-05 --batch_size 400 --n_steps 2000 --num_seconds 2500
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Parameters.')
     parser.add_argument('--env_name', type=str, default='detroit_UAM', help='The name of environment: detroit_UAM,berlin_UAM')
@@ -67,9 +61,8 @@ if __name__ == '__main__':
         passenger_seq = {
             'num_seconds': args.num_seconds + 10,
             "passenger_seq": {
-                # "step_0": [[(2220, 1400), (2000, 1100)], [(1400, 1680), (1270, 450)], [(650, 1000), (1700, 620)]], # models_4
-                "step_0": [[(2220, 1400), (1850, 1100)], [(1450, 2000), (1270, 450)], [(650, 1000), (1700, 620)]], # models_3
-                "step_5": [[(1010, 2220), (400, 1200)]], # "step_5": [[(1130, 1700), (400, 1200)]],"step_10": [[(1130, 1700), (400, 2300)]],
+                "step_0": [[(2220, 1400), (1850, 1100)], [(1450, 2000), (1270, 450)], [(650, 1000), (1700, 620)]],
+                "step_5": [[(1010, 2220), (400, 1200)]],
             }
         }
 
@@ -85,24 +78,13 @@ if __name__ == '__main__':
         }  # (6200, 9000, 100)
         passenger_seq = {
             'num_seconds': args.num_seconds + 10,
-            "passenger_seq": {  # (9570, 7000)
-                # "step_0": [[(2220, 1400), (2000, 1100)], [(1400, 1680), (1270, 450)], [(650, 1000), (1700, 620)]], # models_4
+            "passenger_seq": {
                 "step_0": [[(6594, 7563), (9570, 7210)], [(7494, 5855), (1375, 6530)]],
                 "step_5": [[(3500, 5220), (5100, 2500)]],
                 "step_8": [[(2175, 6906), (2234, 3850)]],
                 "step_15": [[(3781, 3438), (7830, 2430)]],
             }
         }
-        # passenger_seq = {
-        #     'num_seconds': 10,
-        #     "passenger_seq": { #(9570, 7000)
-        #         # "step_0": [[(2220, 1400), (2000, 1100)], [(1400, 1680), (1270, 450)], [(650, 1000), (1700, 620)]], # models_4
-        #         "step_0": [[(6594, 7563), (9570, 6400)], [(9200, 7350), (5700, 4580)], [(7494, 5855), (1375, 5420)]],
-        #         "step_5": [[(3500, 5270), (5100, 2500)]],
-        #         "step_8": [[(2175, 6906), (2234, 3850)]],
-        #         "step_15": [[(3781, 3438), (7830, 2430)]],
-        #     }
-        # }
 
 
     params = {
@@ -118,16 +100,12 @@ if __name__ == '__main__':
     }
     param_name = f'explore_{args.num_seconds}_n_steps_{args.n_steps}_lr_{str(args.lr)}_batch_size_{args.batch_size}'
     env = SubprocVecEnv([make_env(env_index=f'{i}', **params) for i in range(1)])
-    # env = VecNormalize.load(load_path=path_convert(f'./{args.passenger_type}/{args.env_name}/P{args.passenger_len}/sinr_{args.snir_min}/{args.policy_model}/{param_name}/models/last_vec_normalize.pkl'), venv=env)
     env = VecNormalize.load(load_path=path_convert(f'./{args.passenger_type}/{args.env_name}/P{args.passenger_len}/sinr_{args.snir_min}/{args.policy_model}/{param_name}/models/best_vec_normalize.pkl'), venv=env)
-    # env = VecNormalize.load(load_path=path_convert(f'./{args.passenger_type}/{args.env_name}/P{args.passenger_len}/sinr_{args.snir_min}/{args.policy_model}/{param_name}/models/rl_model_vecnormalize_960000_steps.pkl'), venv=env)
 
     env.training = False  # 测试的时候不要更新
     env.norm_reward = False
 
     model_path = path_convert(f'./{args.passenger_type}/{args.env_name}/P{args.passenger_len}/sinr_{args.snir_min}/{args.policy_model}/{param_name}/models/best_model.zip')
-    # model_path = path_convert(f'./{args.passenger_type}/{args.env_name}/P{args.passenger_len}/sinr_{args.snir_min}/{args.policy_model}/{param_name}/models/last_rl_model.zip')
-    # model_path = path_convert(f'./{args.passenger_type}/{args.env_name}/P{args.passenger_len}/sinr_{args.snir_min}/{args.policy_model}/{param_name}/models/rl_model_1680000_steps.zip')
     model = PPO.load(model_path, env=env, device=device)
 
     # 使用模型进行测试
@@ -177,7 +155,7 @@ if __name__ == '__main__':
         trajectories=trajectory,
         goal_points=env.get_attr("goal_seq")[0],
         speed=aircraft_inits["drone_1"]["speed"],  # 60: 50*50, 100: 30*30
-        snir_threshold=args.snir_min, # args.snir_min
+        snir_threshold=args.snir_min,
         img_path=path_convert(f'./{args.env_name}_{args.passenger_type}_P{args.passenger_len}_S{args.snir_min}_{args.policy_model}_{param_name}_snir.png')
     )
 

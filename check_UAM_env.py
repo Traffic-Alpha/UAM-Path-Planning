@@ -33,24 +33,6 @@ def custom_update_cover_radius(position:List[float], communication_range:float) 
     return cover_radius
 
 
-def make_multi_envs(
-        sumo_cfg: str, net_file: str, aircraft_inits:dict,
-        snir_files:dict,
-        num_seconds: int, use_gui: bool,
-):
-    ac_env = ACSNIREnvironment(
-        sumo_cfg=sumo_cfg,
-        num_seconds=num_seconds,
-        net_file=net_file,
-        radio_map_files=snir_files,
-        aircraft_inits=aircraft_inits,
-        use_gui=use_gui
-    )
-    ac_env = ACEnvWrapper(env=ac_env,aircraft_inits=aircraft_inits)
-
-    return ac_env
-
-
 def make_env(
         num_seconds:int,sumo_cfg:str,use_gui:bool,
         net_file:str, snir_files:dict,
@@ -72,7 +54,6 @@ def make_env(
 
 if __name__ == '__main__':
     # env_name = "berlin_UAM"
-    # env_name = "US_UAM"
     env_name = "detroit_UAM"
     sumo_cfg = path_convert(f"./sumo_envs/{env_name}/{env_name}.sumocfg")
     net_file = path_convert(f"./sumo_envs/{env_name}/{env_name}.net.xml")
@@ -80,16 +61,7 @@ if __name__ == '__main__':
         '100': path_convert(f"./sumo_envs/{env_name}/{env_name}_SNIR_100.txt"),
         # xxx, 这里可以添加不同高度的文件
     }
-    # aircraft_inits = {
-    #     'drone_1': {
-    #         "aircraft_type": "drone",
-    #         "action_type": "horizontal_multi_movement",
-    #         "position":(2700, 2600, 100), "speed": 100, "heading":(1,1,0), "communication_range":60,
-    #         "if_sumo_visualization": True, "img_file": path_convert('./asset/drone.png'),
-    #         # "custom_update_cover_radius":custom_update_cover_radius # 使用自定义覆盖范围的计算
-    #     },
-    #
-    # }
+
     aircraft_inits = {
         'drone_1': {
             "aircraft_type": "drone",
@@ -100,23 +72,9 @@ if __name__ == '__main__':
         },
 
     }
-    # passenger_seq = {
-    #     'num_seconds': 100 + 10,
-    #     "passenger_seq": {
-    #         "step_0": [[(2200, 1400), (1900, 1100)], [(1450, 2000), (1270, 450)], [(650, 1000), (1700, 620)]],
-    #         "step_5": [[(900, 1700), (400, 1200)]],
-    #     }
-    # }
+
     passenger_seq = {
         'num_seconds': 100 + 10,
-        # "passenger_seq": {
-        #     # "step_0": [[(2220, 1400), (2000, 1100)], [(1400, 1680), (1270, 450)], [(650, 1000), (1700, 620)]], # models_4
-        #     "step_0": [[(2500, 2200), (2220, 1400)], [(2600, 1500), (1850, 1100)], [(1450, 2000), (1270, 450)]],
-        #     "step_5": [[(1130, 1700), (400, 1550)]],
-        #     "step_8": [[(400, 2300), (650, 1120)]],
-        #     "step_15":[[(1100, 1000), (1700, 620)]],
-        # },
-
         "passenger_seq": {  # (9570, 7000)
             # "step_0": [[(2220, 1400), (2000, 1100)], [(1400, 1680), (1270, 450)], [(650, 1000), (1700, 620)]], # models_4
             "step_0": [[(6594, 7563), (9570, 7210)], [(7494, 5855), (1375, 6530)]],
@@ -146,8 +104,7 @@ if __name__ == '__main__':
     # import time; time.sleep(3)
     while not done:
         action = {
-            "drone_1": 2,
-            # "drone_2":np.random.randint(9),
+            "drone_1": 2, # np.random.randint(9),
         }
         states, rewards, truncated, done, infos = env.step(actions=action)
         if done:

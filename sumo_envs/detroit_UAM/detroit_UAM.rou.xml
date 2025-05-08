@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2024-11-21 22:13:46 by Eclipse SUMO jtrrouter Version 1.19.0
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/jtrrouterConfiguration.xsd">
+
+    <input>
+        <net-file value="E:\OneDrive - CUHK-Shenzhen\RA_419\UAV_Path_planing\code\UAM_PATH_MARL\multi_agent\sumo_envs\OSM\./detroit_UAM/detroit_UAM.net.xml"/>
+        <route-files value="E:\OneDrive - CUHK-Shenzhen\RA_419\UAV_Path_planing\code\UAM_PATH_MARL\multi_agent\sumo_envs\OSM\./detroit_UAM/testflow.trip.xml"/>
+        <turn-ratio-files value="E:\OneDrive - CUHK-Shenzhen\RA_419\UAV_Path_planing\code\UAM_PATH_MARL\multi_agent\sumo_envs\OSM\./detroit_UAM/testflow.turndefs.xml"/>
+    </input>
+
+    <output>
+        <output-file value="E:\OneDrive - CUHK-Shenzhen\RA_419\UAV_Path_planing\code\UAM_PATH_MARL\multi_agent\sumo_envs\OSM\./detroit_UAM/detroit_UAM.rou.xml"/>
+    </output>
+
+    <processing>
+        <randomize-flows value="True"/>
+        <accept-all-destinations value="True"/>
+    </processing>
+
+    <defaults>
+        <departlane value="random"/>
+    </defaults>
+
+    <report>
+        <no-warnings value="true"/>
+    </report>
+
+    <random_number>
+        <seed value="777"/>
+    </random_number>
+
+</configuration>
+-->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+    <vType id="background" length="7.00" probability="1.00" color="155,89,182" tau="1.0"/>
+    <vehicle id="8717259#0__0__background.0" type="background" depart="47.92" departLane="random">
+        <route edges="8717259#0 8717259#4 449611417#0"/>
+    </vehicle>
+    <vehicle id="8717259#0__1__background.0" type="background" depart="75.93" departLane="random">
+        <route edges="8717259#0 8717259#4 8717259#5 8717259#10 502111429 1255067810 288325049 502085058#1 502085057#0 1255066976#1 1255066975 1255066974#0 1255066974#2 1255066973 1255066972 1255066971 502085060#0 502085060#1 508373277#0 372059568#0 1255066970#0 8699554#0"/>
+    </vehicle>
+    <vehicle id="8717259#0__2__background.0" type="background" depart="172.13" departLane="random">
+        <route edges="8717259#0 8717259#4 8717259#5 8717259#10 502111429 1255067810 1255067807#0 1255067807#1 1255067806 1255064417 -8694454#11 8708330#0"/>
+    </vehicle>
+    <vehicle id="8717259#0__3__background.0" type="background" depart="220.54" departLane="random">
+        <route edges="8717259#0 8717259#4 449611417#0"/>
+    </vehicle>
+    <vehicle id="8717259#0__4__background.0" type="background" depart="276.79" departLane="random">
+        <route edges="8717259#0 703359962"/>
+    </vehicle>
+    <vehicle id="8717259#0__5__background.0" type="background" depart="353.45" departLane="random">
+        <route edges="8717259#0 703359962"/>
+    </vehicle>
+</routes>

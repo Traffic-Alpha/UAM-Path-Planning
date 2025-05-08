@@ -1,0 +1,19 @@
+<routes>
+    <vType id="background" length="7.0" tau="1.0" color="155, 89, 182" maxSpeed="3.0"/>
+    <flow id="E0__0__background" begin="0" end="60" from="E0" number="2" type="background"/>
+    <flow id="E1__0__background" begin="0" end="60" from="E1" number="0" type="background"/>
+    <flow id="E7__0__background" begin="0" end="60" from="E7" number="2" type="background"/>
+    <flow id="E15__0__background" begin="0" end="60" from="E15" number="0" type="background"/>
+    <flow id="E0__1__background" begin="60" end="120" from="E0" number="4" type="background"/>
+    <flow id="E1__1__background" begin="60" end="120" from="E1" number="4" type="background"/>
+    <flow id="E7__1__background" begin="60" end="120" from="E7" number="4" type="background"/>
+    <flow id="E15__1__background" begin="60" end="120" from="E15" number="2" type="background"/>
+    <flow id="E0__2__background" begin="120" end="180" from="E0" number="4" type="background"/>
+    <flow id="E1__2__background" begin="120" end="180" from="E1" number="4" type="background"/>
+    <flow id="E7__2__background" begin="120" end="180" from="E7" number="4" type="background"/>
+    <flow id="E15__2__background" begin="120" end="180" from="E15" number="2" type="background"/>
+    <flow id="E0__3__background" begin="180" end="240" from="E0" number="3" type="background"/>
+    <flow id="E1__3__background" begin="180" end="240" from="E1" number="0" type="background"/>
+    <flow id="E7__3__background" begin="180" end="240" from="E7" number="0" type="background"/>
+    <flow id="E15__3__background" begin="180" end="240" from="E15" number="0" type="background"/>
+</routes>
